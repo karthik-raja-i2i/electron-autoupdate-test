@@ -35,5 +35,5 @@ publish:
   owner: karthik-raja-i2i
   repo: electron-autoupdate-test
   vPrefixedTagName: true
-  private: true
+  private: false
   releaseType: release
