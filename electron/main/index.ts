@@ -1,8 +1,12 @@
 import { app, BrowserWindow, shell, ipcMain } from 'electron'
+import { UpdateInfo } from 'electron-updater'
 import { release } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { update } from './update'
+import { createRequire } from 'node:module'
+const { autoUpdater } = createRequire(import.meta.url)('electron-updater');
+
+// import { update } from './update'
 
 globalThis.__filename = fileURLToPath(import.meta.url)
 globalThis.__dirname = dirname(__filename)
@@ -84,9 +88,35 @@ async function createWindow() {
     const win = BrowserWindow.fromWebContents(webContents)
     win.setTitle(title)
   })
+  ipcMain.handle('check-update', async () => {
+    console.log('checking update from outside')
+    // // if (!app.isPackaged) {
+    // //   const error = new Error('The update feature is only available after the package.')
+    // //   return { message: error.message, error }
+    // // }
+
+    try {
+      return await autoUpdater.checkForUpdatesAndNotify()
+    } catch (error) {
+      return { message: 'Network error', error }
+    }
+  })
+  autoUpdater.checkForUpdatesAndNotify()
+  autoUpdater.on('checking-for-update', () => win.webContents.send('checking-for-update'))
+  // update available
+  autoUpdater.on('update-available', (arg: UpdateInfo) => {
+    win.webContents.send('update-can-available', { update: true, version: app.getVersion(), newVersion: arg?.version })
+  })
+  autoUpdater.on('update-not-available', (arg: UpdateInfo) => {
+    win.webContents.send('update-can-available', { update: false, version: app.getVersion(), newVersion: arg?.version })
+  })
+  autoUpdater.on('download-progress', () => win.webContents.send('download-progress'))
+  autoUpdater.on('update-downloaded', win.webContents.send('update-downloaded'))
+  autoUpdater.on('error', () => win.webContents.send('update-error'))
 
   // Apply electron-updater
-  update()
+  // update(win, ipcMain)
+
 }
 
 app.whenReady().then(createWindow)

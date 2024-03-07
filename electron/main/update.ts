@@ -1,16 +1,41 @@
 import { app, ipcMain } from 'electron'
 import { createRequire } from 'node:module'
-// import type {
-//   ProgressInfo,
-//   UpdateDownloadedEvent,
-//   UpdateInfo,
-// } from 'electron-updater'
+import type {
+  ProgressInfo,
+  UpdateDownloadedEvent,
+  UpdateInfo,
+} from 'electron-updater'
 
 const { autoUpdater } = createRequire(import.meta.url)('electron-updater');
 
 // const log = require("electron-log")
-export function update() {
+export function update(win, mainProcess) {
   autoUpdater.checkForUpdatesAndNotify()
+  autoUpdater.on('checking-for-update', () => win.webContents.send('checking-for-update'))
+  // update available
+  autoUpdater.on('update-available', (arg: UpdateInfo) => {
+    win.webContents.send('update-can-available', { update: true, version: app.getVersion(), newVersion: arg?.version })
+  })
+  autoUpdater.on('update-not-available', (arg: UpdateInfo) => {
+    win.webContents.send('update-can-available', { update: false, version: app.getVersion(), newVersion: arg?.version })
+  })
+  autoUpdater.on('download-progress', () => win.webContents.send('download-progress'))
+  autoUpdater.on('update-downloaded', win.webContents.send('update-downloaded'))
+  autoUpdater.on('error', () => win.webContents.send('update-error'))
+
+  mainProcess.handle('check-update', async () => {
+    console.log('checking update from inside')
+    // if (!app.isPackaged) {
+    //   const error = new Error('The update feature is only available after the package.')
+    //   return { message: error.message, error }
+    // }
+
+    // try {
+    //   return await autoUpdater.checkForUpdatesAndNotify()
+    // } catch (error) {
+    //   return { message: 'Network error', error }
+    // }
+  })
 }
 
 // export function update(win: Electron.BrowserWindow) {
