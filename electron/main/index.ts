@@ -101,7 +101,6 @@ async function createWindow() {
       return { message: 'Network error', error }
     }
   })
-  autoUpdater.checkForUpdatesAndNotify()
   autoUpdater.on('checking-for-update', () => win.webContents.send('checking-for-update'))
   // update available
   autoUpdater.on('update-available', (arg: UpdateInfo) => {
@@ -120,6 +119,10 @@ async function createWindow() {
 }
 
 app.whenReady().then(createWindow)
+
+app.on('ready', () => {
+  autoUpdater.checkForUpdatesAndNotify()
+})
 
 app.on('window-all-closed', () => {
   win = null
