@@ -1,9 +1,8 @@
 {
-  "name": "electron-vite-react",
-  "version": "2.2.0",
+  "name": "hello-world",
+  "version": "0.0.1",
   "main": "dist-electron/main/index.js",
-  "description": "Electron Vite React boilerplate.",
-  "author": "草鞋没号 <308487730@qq.com>",
+  "description": "Electron Vite React boilerplate with auto update",
   "license": "MIT",
   "private": true,
   "debug": {
@@ -14,7 +13,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && electron-builder",
+    "build": "vite build && electron-builder",
+    "build:win": "vite build && electron-builder --win --config",
+    "build:linux": "vite build && electron-builder --linux --config",
     "preview": "vite preview",
     "pree2e": "vite build --mode=test",
     "e2e": "playwright test"
@@ -28,6 +29,7 @@
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.4",
     "autoprefixer": "^10.4.16",
+    "dotenv": "^16.4.5",
     "electron": "^28.1.0",
     "electron-builder": "^24.6.3",
     "postcss": "^8.4.31",
@@ -38,5 +40,13 @@
     "vite": "^5.0.10",
     "vite-plugin-electron": "^0.28.0",
     "vite-plugin-electron-renderer": "^0.14.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/karthik-raja-i2i/electron-autoupdate-test.git"
+  },
+  "author": {
+    "name": "Karthik",
+    "email": "karthickraja@ideas2it.com"
   }
 }

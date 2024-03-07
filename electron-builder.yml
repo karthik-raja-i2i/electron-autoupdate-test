@@ -1,0 +1,39 @@
+appId: dummy-appid
+asar: true
+directories:
+  output: release/${version}
+files:
+- dist-electron
+- dist
+mac:
+  artifactName: "${productName}_${version}.${ext}"
+  target:
+  - dmg
+  - zip
+win:
+  target:
+  - target: nsis
+    arch:
+    - x64
+  artifactName: "${productName}_${version}.${ext}"
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+
+linux:
+  artifactName: ${productName}-linux-${version}.${ext}
+  icon: public/logo256.png
+  target:
+    - AppImage
+    - deb
+  synopsis: Test
+  category: Office
+publish:
+- provider: github
+  owner: karthik-raja-i2i
+  repo: electron-autoupdate-test
+  vPrefixedTagName: true
+  private: true
+  releaseType: release

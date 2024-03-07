@@ -6,6 +6,7 @@ import './App.css'
 
 function App() {
   const [count, setCount] = useState(0)
+  const changeTitle = (title) => document.title = title
   return (
     <div className='App'>
       <div className='logo-box'>
@@ -31,6 +32,7 @@ function App() {
       </div>
 
       <UpdateElectron />
+      <button onClick={() => window.electronAPI.setTitle('dummy')}>Change title</button>
     </div>
   )
 }
