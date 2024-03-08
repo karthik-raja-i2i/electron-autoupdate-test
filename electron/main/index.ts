@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createRequire } from 'node:module'
 const { autoUpdater } = createRequire(import.meta.url)('electron-updater');
+import { version } from '../../package.json'
 
 // import { update } from './update'
 
@@ -63,7 +64,7 @@ async function createWindow() {
       // contextIsolation: false,
     },
   })
-
+  
   if (url) { // electron-vite-vue#298
     win.loadURL(url)
     // Open devTool if the app is not packaged
@@ -71,6 +72,7 @@ async function createWindow() {
     win.loadFile(indexHtml)
   }
   win.webContents.openDevTools()
+  // win.setTitle(`basklsk`)
 
   // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
@@ -86,14 +88,14 @@ async function createWindow() {
   ipcMain.on('set-title', (event, title) => {
     const webContents = event.sender
     const win = BrowserWindow.fromWebContents(webContents)
-    win.setTitle(title)
+    win.setTitle(`${title}-v${version}`)
   })
   ipcMain.handle('check-update', async () => {
     console.log('checking update from outside')
-    // // if (!app.isPackaged) {
-    // //   const error = new Error('The update feature is only available after the package.')
-    // //   return { message: error.message, error }
-    // // }
+    if (!app.isPackaged) {
+      const error = new Error('The update feature is only available after the package.')
+      return { message: error.message, error }
+    }
 
     try {
       return await autoUpdater.checkForUpdatesAndNotify()
@@ -121,6 +123,7 @@ async function createWindow() {
 app.whenReady().then(createWindow)
 
 app.on('ready', () => {
+  if (!app.isPackaged) return
   autoUpdater.checkForUpdatesAndNotify()
 })
 

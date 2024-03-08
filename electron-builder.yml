@@ -10,17 +10,43 @@ mac:
   target:
   - dmg
   - zip
+# win:
+#   target:
+#   - target: nsis
+#     arch:
+#     - x64
+#   artifactName: "${productName}_${version}.${ext}"
+# nsis:
+#   oneClick: false
+#   perMachine: false
+#   allowToChangeInstallationDirectory: true
+#   deleteAppDataOnUninstall: false
+
 win:
+  publisherName: NurtureBox
+  artifactName: ${name}-${version}-windows-${arch}.${ext}
+  icon: electron/resources/icon.ico
   target:
-  - target: nsis
-    arch:
-    - x64
-  artifactName: "${productName}_${version}.${ext}"
+    - target: nsis
+      arch:
+        - x64
+        - arm64
+        - ia32
+
 nsis:
   oneClick: false
   perMachine: false
+  shortcutName: NurtureBox
+  artifactName: ${name}-${version}-windows-${arch}.${ext}
+  createDesktopShortcut: true
+  multiLanguageInstaller: false
+  createStartMenuShortcut: true
+  deleteAppDataOnUninstall: true
   allowToChangeInstallationDirectory: true
-  deleteAppDataOnUninstall: false
+  installerLanguages:
+    - en_US
+  installerIcon: public/favicon.ico
+  installerHeaderIcon: public/favicon.ico
 
 linux:
   artifactName: ${productName}-linux-${version}.${ext}
